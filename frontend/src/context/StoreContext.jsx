@@ -1,4 +1,5 @@
 import axios from "axios";
+import PropTypes from "prop-types";
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -6,7 +7,7 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
-  const url = "https://food-delivery-backend-5b6g.onrender.com";
+  const url = "http://localhost:4000";
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
 
@@ -103,4 +104,9 @@ const StoreContextProvider = (props) => {
     </StoreContext.Provider>
   );
 };
+
+StoreContextProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 export default StoreContextProvider;

@@ -12,6 +12,8 @@ const addFood = async (req, res) => {
     price: req.body.price,
     category: req.body.category,
     image: image_filename,
+    rating: req.body.rating,
+    spiceLevel: req.body.spiceLevel,
   });
   try {
     let userData = await userModel.findById(req.body.userId);

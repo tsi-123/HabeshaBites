@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
+import PropTypes from "prop-types";
 import "./Navbar.css";
 import { assets } from "../../assets/frontend_assets/assets";
 import { Link, useNavigate } from "react-router-dom";
@@ -38,17 +39,17 @@ const Navbar = ({ setShowLogin }) => {
         </a>
         <a
           href="#app-download"
-          onClick={() => setMenu("mobile-app")}
-          className={menu === "mobile-app" ? "active" : ""}
+          onClick={() => setMenu("Recipes")}
+          className={menu === "Recipes" ? "active" : ""}
         >
-          mobile-app
+          Recipes
         </a>
         <a
           href="#footer"
-          onClick={() => setMenu("contact-us")}
-          className={menu === "contact-us" ? "active" : ""}
+          onClick={() => setMenu("contact")}
+          className={menu === "contact" ? "active" : ""}
         >
-          contact us
+          contact 
         </a>
       </ul>
       <div className="navbar-right">
@@ -74,6 +75,10 @@ const Navbar = ({ setShowLogin }) => {
       </div>
     </div>
   );
+};
+
+Navbar.propTypes = {
+  setShowLogin: PropTypes.func.isRequired,
 };
 
 export default Navbar;

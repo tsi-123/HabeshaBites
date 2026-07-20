@@ -1,18 +1,16 @@
-import React from "react";
 import "./Header.css";
 
 const Header = () => {
   return (
     <div className="header">
       <div className="header-contents">
-        <h2>Order your favourite food here</h2>
+        <h2>Experience Authentic Ethiopian Cuisine</h2>
         <p>
-          Choose from a diverse menu featuring a detectable array of dishes
-          crafted with the finest ingredients and culinary expertise. Our
-          mission is to satisfy your cravings and elevate your dining
-          experience, one delicious meal at a time.
+         Discover Ethiopia&apos;s rich culinary traditions through authentic dishes,
+         freshly prepared by local restaurants. From Doro Wat to Kitfo and
+         traditional coffee, every meal tells a story.
         </p>
-        <button>View Menu</button>
+        <button>Explore Menu</button>
       </div>
     </div>
   );

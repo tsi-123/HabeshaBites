@@ -3,6 +3,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
 }
 .navbar .logo{
     width: 150px;
@@ -12,7 +13,7 @@
     display: flex;
     list-style: none;
     gap: 20px;
-    color: #49557e;
+    color: var(--text);
     font-size: 18px;
 }
 .navbar-right{
@@ -22,25 +23,31 @@
 }
 
 .navbar button{
-    background: transparent;
+    background: white;
     font-size: 16px;
-    color: #49557e;
-    border: 1px solid tomato;
+    color: var(--primary);
+    border: 2px solid var(--primary);
     padding: 10px 30px;
     border-radius: 50px;
     cursor: pointer;
     transition: 0.3s;
+    font-weight: 600;
+}
+.navbar button:hover{
+    background-color: var(--primary);
+    color: white;
 }
 
 .navbar button:hover{
-    background-color: #fff4f2;
+    opacity: 0.9;
+    transform: scale(1.05);
 }
-
 .navbar .active{
     padding-bottom: 2px;
-    border-bottom: 2px solid #49557e;
+    border-bottom: 3px solid var(--primary);
+    color: var(--primary);
+    font-weight: 600;
 }
-
 .navbar li{
     cursor: pointer;
 }
@@ -52,7 +59,7 @@
     position: absolute;
     min-width: 10px;
     min-height: 10px;
-    background-color: tomato;
+    background-color: var(--primary);
     border-radius: 5px;
     top: -8px;
     right: -8px;
@@ -70,12 +77,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: #fff2ef;
+    background-color: white;
     padding: 12px 25px;
-    border-radius: 4px;
-    border: 1px solid tomato;
-    outline: 2px solid white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    outline: none;
     list-style: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 .nav-profile-dropdown li{
     display: flex;
@@ -87,11 +95,11 @@
     width: 20px;
 }
 .nav-profile-dropdown li:hover{
-    color: tomato;
+    color: var(--primary);
 }
 @media (max-width:1050px) {
     .navbar .logo{
-        width: 140px;
+        width: 170px;
     } 
     .navbar-menu{
         gap: 20px;
@@ -109,7 +117,7 @@
 }
 @media (max-width:900px) {
     .navbar .logo{
-        width: 120px;
+        width: 170px;
     } 
     .navbar-menu{
         gap: 15px;

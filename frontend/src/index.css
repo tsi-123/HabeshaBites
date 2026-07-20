@@ -1,19 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
+:root{
+  /* HabeshaBites Color Palette */
+
+  --primary: #8B4513;      /* Rich brown */
+  --secondary: #C79A3B;    /* Ethiopian gold */
+  --background: #FFF8F0;   /* Warm cream */
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-light: #6B7280;
+  --success: #2E7D32;
+  --border: #E5E7EB;
+}
+
 *{
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: Outfit;
+  font-family: Outfit, sans-serif;
   scroll-behavior: smooth;
 }
+
 body{
   min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
 }
+
 a{
   text-decoration: none;
   color: inherit;
 }
+
 .app{
   width: 80%;
   margin: auto;
@@ -21,9 +39,9 @@ a{
 
 @keyframes fadeIn{
   0%{
-    opacity: 0;
+    opacity:0;
   }
   100%{
-    opacity: 1;
+    opacity:1;
   }
 }

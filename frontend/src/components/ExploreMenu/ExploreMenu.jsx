@@ -1,15 +1,16 @@
-import React from "react";
+import PropTypes from "prop-types";
 import "./ExploreMenu.css";
 import { menu_list } from "../../assets/frontend_assets/assets";
 
-const ExploreMenu = ({category,setCategory}) => {
+const ExploreMenu = ({ category, setCategory }) => {
   return (
     <div className="explore-menu" id="explore-menu">
-      <h1>Explore our menu</h1>
+      <h1>Discover Ethiopian Cuisine</h1>
       <p className="explore-menu-text">
-        Choose from a diverse menu featuring a detectable array of dishes. Our
-        mission is to satisfy your cravings and elevate your dining experience,
-        one delicious meal at a time.
+         Explore Ethiopia&apos;s rich culinary heritage, from traditional
+         dishes and hearty breakfasts to aromatic coffee and 
+         handcrafted snacks. Every category brings you closer to the
+         authentic flavors of Ethiopia.
       </p>
       <div className="explore-menu-list">
         {menu_list.map((item, index) => {
@@ -24,6 +25,11 @@ const ExploreMenu = ({category,setCategory}) => {
       <hr/>
     </div>
   );
+};
+
+ExploreMenu.propTypes = {
+  category: PropTypes.string.isRequired,
+  setCategory: PropTypes.func.isRequired,
 };
 
 export default ExploreMenu;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
@@ -62,7 +62,7 @@ const PlaceOrder = () => {
       toast.error("Please Add Items to Cart");
       navigate("/cart")
     }
-  },[token])
+  }, [token, getTotalCartAmount, navigate])
   return (
     <form className="place-order" onSubmit={placeOrder}>
       <div className="place-order-left">
