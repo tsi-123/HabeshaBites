@@ -5,6 +5,7 @@ import { assets } from "../../assets/frontend_assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 import { toast } from "react-toastify";
+import { FaHeart, FaUser } from "react-icons/fa";
 
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
@@ -66,6 +67,10 @@ const Navbar = ({ setShowLogin }) => {
           <div className="navbar-profile">
             <img src={assets.profile_icon} alt="" />
             <ul className="nav-profile-dropdown">
+              <li onClick={()=>navigate("/profile")}><FaUser className="nav-dropdown-icon" /><p>Profile</p></li>
+              <hr />
+              <li onClick={()=>navigate("/favorites")}><FaHeart className="nav-dropdown-icon" /><p>Favorites</p></li>
+              <hr />
               <li onClick={()=>navigate("/myorders")}><img src={assets.bag_icon} alt="" /><p>Orders</p></li>
               <hr />
               <li onClick={logout}><img src={assets.logout_icon} alt="" /><p>Logout</p></li>

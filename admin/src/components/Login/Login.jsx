@@ -28,7 +28,7 @@ const Login = ({ url }) => {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("admin", true);
         toast.success("Login Successfully");
-        navigate("/add")
+        navigate("/dashboard")
       }else{
         toast.error("You are not an admin");
       }
@@ -38,7 +38,7 @@ const Login = ({ url }) => {
   };
   useEffect(()=>{
     if(admin && token){
-       navigate("/add");
+       navigate("/dashboard");
     }
   },[])
   return (

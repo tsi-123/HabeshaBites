@@ -76,16 +76,82 @@ const StoreContextProvider = (props) => {
     setCartItems(response.data.cartData);
   };
 
+  const [favorites, setFavorites] = useState([]);
+
+  const fetchFavorites = async (userToken) => {
+    try {
+      const response = await axios.get(url + "/api/favourites", {
+        headers: { token: userToken },
+      });
+      if (response.data.success) {
+        setFavorites(response.data.data.map((item) => item._id));
+      }
+    } catch (error) {
+      console.log("Error fetching favorites", error);
+    }
+  };
+
+  const addToFavorites = async (foodId) => {
+    if (!token) {
+      toast.error("Please login to add favorites");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        url + "/api/favourites/add",
+        { foodId },
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        setFavorites((prev) => [...prev, foodId]);
+        toast.success("Added to Favourites");
+      } else {
+        toast.error(response.data.message || "Failed to add to favourites");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error adding to favourites");
+    }
+  };
+
+  const removeFromFavorites = async (foodId) => {
+    if (!token) return;
+    try {
+      const response = await axios.delete(
+        `${url}/api/favourites/remove/${foodId}`,
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        setFavorites((prev) => prev.filter((id) => id !== foodId));
+        toast.success("Removed from Favourites");
+      } else {
+        toast.error(response.data.message || "Failed to remove from favourites");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error removing from favourites");
+    }
+  };
+
   useEffect(() => {
     async function loadData() {
       await fetchFoodList();
       if (localStorage.getItem("token")) {
-        setToken(localStorage.getItem("token"));
-        await loadCardData(localStorage.getItem("token"));
+        const storedToken = localStorage.getItem("token");
+        setToken(storedToken);
+        await loadCardData(storedToken);
       }
     }
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchFavorites(token);
+    } else {
+      setFavorites([]);
+    }
+  }, [token]);
 
   const contextValue = {
     food_list,
@@ -97,6 +163,9 @@ const StoreContextProvider = (props) => {
     url,
     token,
     setToken,
+    favorites,
+    addToFavorites,
+    removeFromFavorites,
   };
   return (
     <StoreContext.Provider value={contextValue}>

@@ -11,6 +11,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Verify from "./pages/Verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import SplitBill from "./pages/SplitBill/SplitBill";
+import Payment from "./pages/payment/payment";
+import Favourites from "./pages/Favourites/Favourites";
+import Profile from "./pages/Profile/Profile";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -27,6 +30,9 @@ const App = () => {
           <Route path="/verify" element={<Verify />} />
           <Route path="/myorders" element={<MyOrders />} />
           <Route path="/split-bill" element={<SplitBill />} />
+          <Route path="/payment/:token" element={<Payment />} />
+          <Route path="/favorites" element={<Favourites />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
       <Footer />

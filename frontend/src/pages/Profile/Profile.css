@@ -1,0 +1,241 @@
+.profile-page {
+  padding: 40px 0px;
+  min-height: 80vh;
+  animation: fadeIn 0.8s;
+}
+
+.profile-container h2 {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 30px;
+}
+
+.profile-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 30px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Avatar Upload styling */
+.avatar-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--primary);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbf7f3;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 3rem;
+  color: var(--text-light);
+}
+
+.avatar-label {
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--primary);
+  padding: 6px 16px;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+.avatar-label:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Form inputs with icons */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: var(--primary);
+}
+
+.disabled-input {
+  background: #f5f5f5 !important;
+  color: #888 !important;
+  padding-left: 12px !important;
+  cursor: not-allowed;
+}
+
+.save-btn {
+  padding: 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.15);
+  transition: all 0.2s;
+}
+
+.save-btn:hover {
+  background: #73390f;
+  transform: translateY(-1px);
+}
+
+.save-btn:disabled {
+  background: var(--text-light);
+  cursor: not-allowed;
+}
+
+/* Dining Statistics Panel */
+.stats-card h3 {
+  font-size: 1.25rem;
+  color: var(--primary);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--background);
+  padding-bottom: 8px;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fbfdfb;
+}
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.stat-icon-wrapper.orders {
+  background: #e3f2fd;
+  color: #1e88e5;
+}
+
+.stat-icon-wrapper.revenue {
+  background: #e8f5e9;
+  color: var(--success);
+}
+
+.stat-icon-wrapper.dish {
+  background: #fff8e1;
+  color: #ffb300;
+}
+
+.stat-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Skeleton Loading states */
+.profile-container.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #eee;
+  margin: 0 auto 20px auto;
+  animation: pulse 1.5s infinite;
+}
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

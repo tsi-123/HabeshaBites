@@ -3,26 +3,38 @@ import PropTypes from "prop-types";
 import "./FoodDisplay.css";
 import { StoreContext } from "../../context/StoreContext";
 import FoodItem from "../FoodItem/FoodItem";
+import { FiAlertCircle } from "react-icons/fi";
 
 const FoodDisplay = ({ category, search }) => {
   const { food_list } = useContext(StoreContext);
+
+  const filteredFoods = food_list.filter((item) => {
+    const matchesCategory =
+      category === "All" || category.toLowerCase() === item.category.toLowerCase();
+
+    const searchTerm = search.toLowerCase().trim();
+    const matchesSearch =
+      searchTerm === "" ||
+      item.name.toLowerCase().includes(searchTerm) ||
+      item.description.toLowerCase().includes(searchTerm) ||
+      item.category.toLowerCase().includes(searchTerm);
+
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="food-display" id="food-display">
       <h2>Top dishes near you</h2>
 
-      <div className="food-display-list">
-        {food_list
-          .filter((item) => {
-            const matchesCategory =
-              category === "All" || category === item.category;
-
-            const matchesSearch =
-              item.name.toLowerCase().includes(search.toLowerCase());
-
-            return matchesCategory && matchesSearch;
-          })
-          .map((item) => (
+      {filteredFoods.length === 0 ? (
+        <div className="search-no-results">
+          <FiAlertCircle className="no-results-icon" />
+          <h3>No Dishes Found</h3>
+          <p>We couldn't find any dishes matching "{search}". Try searching for something else!</p>
+        </div>
+      ) : (
+        <div className="food-display-list">
+          {filteredFoods.map((item) => (
             <FoodItem
               key={item._id}
               id={item._id}
@@ -34,7 +46,8 @@ const FoodDisplay = ({ category, search }) => {
               spiceLevel={item.spiceLevel}
             />
           ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import splitModel from "../models/splitModel.js";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -114,4 +115,69 @@ const updateStatus = async (req, res) => {
   }
 };
 
-export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus };
+// get dashboard stats for admin
+const getDashboardStats = async (req, res) => {
+  try {
+    const userData = await userModel.findById(req.body.userId);
+    if (!userData || userData.role !== "admin") {
+      return res.json({ success: false, message: "Not Authorized" });
+    }
+
+    const allOrders = await orderModel.find({});
+    const paidOrders = allOrders.filter((o) => o.payment === true);
+    const totalRevenue = paidOrders.reduce((sum, o) => sum + o.amount, 0);
+
+    const foodCounts = {};
+    paidOrders.forEach((order) => {
+      order.items.forEach((item) => {
+        foodCounts[item.name] = (foodCounts[item.name] || 0) + item.quantity;
+      });
+    });
+
+    const popularFoods = Object.entries(foodCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const allSplits = await splitModel.find({});
+    let completedSplits = 0;
+    let splitRevenue = 0;
+
+    allSplits.forEach((split) => {
+      const isCompleted = split.shares.every((share) => share.status === "Paid");
+      if (isCompleted) {
+        completedSplits++;
+      }
+      split.shares.forEach((share) => {
+        if (share.status === "Paid") {
+          splitRevenue += share.amount;
+        }
+      });
+    });
+
+    const splitStats = {
+      totalSplits: allSplits.length,
+      completedSplits,
+      pendingSplits: allSplits.length - completedSplits,
+      splitRevenue,
+    };
+
+    const recentOrders = await orderModel.find({}).sort({ date: -1 }).limit(5);
+
+    res.json({
+      success: true,
+      stats: {
+        totalRevenue,
+        totalOrders: allOrders.length,
+        popularFoods,
+        splitStats,
+        recentOrders,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus, getDashboardStats };
