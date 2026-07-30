@@ -6,7 +6,10 @@ const orderSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   address: { type: Object, required: true },
   status: { type: String, default: "Food Processing" },
-  date: { type: Date, default: Date.now() },
+  // FIXED: was `Date.now()` — calling the function at schema parse time means
+  // ALL orders got the same date (the server start time).
+  // `Date.now` (without parentheses) is a function reference, called per-document.
+  date: { type: Date, default: Date.now },
   payment: { type: Boolean, default: false },
 });
 

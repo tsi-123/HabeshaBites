@@ -1,8 +1,11 @@
 # Dependencies
 node_modules/
 
-# Environment variables
+# Environment variables — NEVER commit these
 .env
+.env.local
+.env.production
+.env.*.local
 
 # Build folders
 dist/
@@ -24,3 +27,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Uploaded files (generated at runtime — back up separately)
+backend/uploads/*
+!backend/uploads/.gitkeep

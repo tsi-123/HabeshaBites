@@ -3,12 +3,29 @@ import userModel from "../models/userModel.js";
 import splitModel from "../models/splitModel.js";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// FIXED: Stripe is now lazily initialized inside placeOrder.
+// Previously `new Stripe(process.env.STRIPE_SECRET_KEY)` ran at module load time.
+// If STRIPE_SECRET_KEY is empty or undefined, it would crash the entire server on startup.
+const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error(
+      "STRIPE_SECRET_KEY is not set. Please add it to your .env file."
+    );
+  }
+  return new Stripe(key);
+};
 
 // placing user order for frontend
 const placeOrder = async (req, res) => {
-  const frontend_url = "https://food-delivery-frontend-s2l9.onrender.com";
+  // FIXED: was hardcoded "https://food-delivery-frontend-s2l9.onrender.com"
+  // Now reads from env var so it works in local dev AND production without code changes.
+  const frontend_url =
+    process.env.FRONTEND_URL || "http://localhost:5173";
+
   try {
+    const stripe = getStripe(); // Initialize stripe only when needed
+
     const newOrder = new orderModel({
       userId: req.body.userId,
       items: req.body.items,
@@ -50,7 +67,7 @@ const placeOrder = async (req, res) => {
     res.json({ success: true, session_url: session.url });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: "Error" });
+    res.json({ success: false, message: error.message || "Error placing order" });
   }
 };
 
@@ -81,7 +98,7 @@ const userOrders = async (req, res) => {
   }
 };
 
-// Listing orders for admin pannel
+// Listing orders for admin panel
 const listOrders = async (req, res) => {
   try {
     let userData = await userModel.findById(req.body.userId);
@@ -106,7 +123,7 @@ const updateStatus = async (req, res) => {
         status: req.body.status,
       });
       res.json({ success: true, message: "Status Updated Successfully" });
-    }else{
+    } else {
       res.json({ success: false, message: "You are not an admin" });
     }
   } catch (error) {

@@ -26,7 +26,7 @@ const Login = ({ url }) => {
         setToken(response.data.token);
         setAdmin(true);
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("admin", true);
+        localStorage.setItem("admin", "true");
         toast.success("Login Successfully");
         navigate("/dashboard")
       }else{

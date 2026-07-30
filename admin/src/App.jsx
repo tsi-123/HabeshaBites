@@ -11,7 +11,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Login from "./components/Login/Login";
 
 const App = () => {
-  const url = "http://localhost:4000";
+  // FIXED: was hardcoded "http://localhost:4000" — breaks in production.
+  // Now reads from VITE_API_URL env variable. Falls back to localhost for local dev.
+  const url = import.meta.env.VITE_API_URL || "http://localhost:4000";
   return (
     <div>
       <ToastContainer />

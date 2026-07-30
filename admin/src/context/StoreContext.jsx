@@ -9,15 +9,14 @@ const StoreContextProvider = (props) => {
 
 
   useEffect(() => {
-    async function loadData() {
-      if (localStorage.getItem("token")) {
-        setToken(localStorage.getItem("token"));
-      }
-      if (localStorage.getItem("admin")) {
-        setAdmin(localStorage.getItem("admin"));
-      }
+    const storedToken = localStorage.getItem("token");
+    const storedAdmin = localStorage.getItem("admin");
+    if (storedToken) {
+      setToken(storedToken);
     }
-    loadData();
+    if (storedAdmin === "true") {
+      setAdmin(true);
+    }
   }, []);
 
   const contextValue = {
