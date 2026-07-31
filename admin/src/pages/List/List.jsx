@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useContext } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
+import { normalizeImageUrl } from "../../utils/imageUtils";
 
 const List = ({ url }) => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const List = ({ url }) => {
         {list.map((item, index) => {
           return (
             <div key={index} className="list-table-format">
-              <img src={item.image} alt="" />
+              <img src={normalizeImageUrl(item.image)} alt="" />
               <p>{item.name}</p>
               <p>{item.category}</p>
               <p>${item.price}</p>

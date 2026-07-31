@@ -6,6 +6,7 @@ import { assets } from "../../assets/frontend_assets/assets";
 import { FaStar } from "react-icons/fa";
 import { FiX, FiInbox } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { normalizeImageUrl } from "../../utils/imageUtils";
 
 const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
@@ -191,7 +192,7 @@ const MyOrders = () => {
             <div className="review-items-container">
               {reviewOrder.items.map((item) => (
                 <div key={item._id} className="review-item-row">
-                  <img src={ item.image} alt={item.name} className="review-item-img" />
+                  <img src={normalizeImageUrl(item.image)} alt={item.name} className="review-item-img" />
                   <div className="review-item-details">
                     <h4>{item.name}</h4>
                     
