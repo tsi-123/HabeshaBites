@@ -31,6 +31,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
 
   const isFavorite = favorites && favorites.includes(id);
   const normalizedImage = normalizeImageUrl(image);
+  const safeCartItems = cartItems || {};
 
   const toggleFavorite = (e) => {
     e.stopPropagation();
@@ -107,7 +108,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
               <FaRegHeart className="fav-icon" />
             )}
           </div>
-          {!cartItems[id] ? (
+          {!safeCartItems[id] ? (
             <img
               className="add"
               onClick={() => addToCart(id)}
@@ -121,7 +122,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
                 src={assets.remove_icon_red}
                 alt=""
               />
-              <p>{cartItems[id]}</p>
+              <p>{safeCartItems[id]}</p>
               <img onClick={() => addToCart(id)} src={assets.add_icon_green} alt="" />
             </div>
           )}

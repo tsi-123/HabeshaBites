@@ -28,7 +28,8 @@ const Cart = () => {
         <br />
         <hr />
         {food_list.map((item) => {
-          const quantity = cartItems[item._id] || 0;
+          const safeCartItems = cartItems || {};
+          const quantity = safeCartItems[item._id] || 0;
           if (quantity > 0 && item?.price != null) {
             return (
               <div key={item._id}>
