@@ -9,15 +9,19 @@ const FoodDisplay = ({ category, search }) => {
   const { food_list } = useContext(StoreContext);
 
   const filteredFoods = food_list.filter((item) => {
+    const itemCategory = item.category || "";
+    const itemName = item.name || "";
+    const itemDesc = item.description || "";
+
     const matchesCategory =
-      category === "All" || category.toLowerCase() === item.category.toLowerCase();
+      category === "All" || category.toLowerCase() === itemCategory.toLowerCase();
 
     const searchTerm = search.toLowerCase().trim();
     const matchesSearch =
       searchTerm === "" ||
-      item.name.toLowerCase().includes(searchTerm) ||
-      item.description.toLowerCase().includes(searchTerm) ||
-      item.category.toLowerCase().includes(searchTerm);
+      itemName.toLowerCase().includes(searchTerm) ||
+      itemDesc.toLowerCase().includes(searchTerm) ||
+      itemCategory.toLowerCase().includes(searchTerm);
 
     return matchesCategory && matchesSearch;
   });

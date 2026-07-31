@@ -57,12 +57,13 @@ const StoreContextProvider = (props) => {
   };
 
   const getTotalCartAmount = () => {
+    if (!cartItems || typeof cartItems !== "object") return 0;
     let totalAmount = 0;
     for (const item in cartItems) {
       const quantity = cartItems[item] || 0;
       if (quantity > 0) {
         const itemInfo = food_list.find((product) => product._id === item);
-        if (!itemInfo) {
+        if (!itemInfo || itemInfo.price == null) {
           continue;
         }
         totalAmount += itemInfo.price * quantity;
@@ -81,12 +82,19 @@ const StoreContextProvider = (props) => {
   };
 
   const loadCardData = async (token) => {
-    const response = await axios.post(
-      url + "/api/cart/get",
-      {},
-      { headers: { token } }
-    );
-    setCartItems(response.data.cartData);
+    try {
+      const response = await axios.post(
+        url + "/api/cart/get",
+        {},
+        { headers: { token } }
+      );
+      // Guard: cartData may be undefined for new users or empty carts
+      if (response.data && response.data.cartData) {
+        setCartItems(response.data.cartData);
+      }
+    } catch (error) {
+      console.log("Error loading cart data:", error);
+    }
   };
 
   const [favorites, setFavorites] = useState([]);
