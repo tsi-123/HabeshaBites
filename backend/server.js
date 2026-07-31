@@ -74,6 +74,21 @@ app.get("/", (req, res) => {
 connectDB()
   .then(() => {
     app.use("/api/food", foodRouter);
+    
+    // Redirect requests for nested absolute URLs under /images/ (e.g. /images/https://res.cloudinary.com/...)
+    app.use("/images", (req, res, next) => {
+      const rawUrl = req.originalUrl || req.url;
+      const match = rawUrl.match(/\/images\/(https?:\/?\/?.+)$/i);
+      if (match) {
+        let targetUrl = match[1];
+        if (/^https?:\/[^\/]/i.test(targetUrl)) {
+          targetUrl = targetUrl.replace(/^(https?:\/)/i, "$1/");
+        }
+        return res.redirect(301, targetUrl);
+      }
+      next();
+    });
+
     app.use("/images", express.static(uploadsDir));
     app.use("/api/user", userRouter);
     app.use("/api/cart", cartRouter);
