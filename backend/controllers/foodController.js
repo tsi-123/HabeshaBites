@@ -6,13 +6,13 @@ import path from "path";
 // add food items
 
 const addFood = async (req, res) => {
-  let image_filename = `${req.file.filename}`;
+  const image_url = req.file.path;
   const food = new foodModel({
     name: req.body.name,
     description: req.body.description,
     price: req.body.price,
     category: req.body.category,
-    image: image_filename,
+    image: image_url,
     rating: req.body.rating,
     spiceLevel: req.body.spiceLevel,
   });
@@ -50,7 +50,7 @@ const removeFood = async (req, res) => {
       if (!food) {
         return res.json({ success: false, message: "Food item not found" });
       }
-      fs.unlink(path.join("uploads", food.image), () => {});
+      // fs.unlink(path.join("uploads", food.image), () => {});
       await foodModel.findByIdAndDelete(req.body.id);
       res.json({ success: true, message: "Food Removed" });
     } else {

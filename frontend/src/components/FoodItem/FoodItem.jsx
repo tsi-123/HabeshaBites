@@ -97,7 +97,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
     <>
       <div className="food-item">
         <div className="food-item-img-container">
-          <img src={url + "/images/" + image} alt="" className="food-item-image" />
+        <img src={image} alt="" className="food-item-image" />
           <div className="favorite-icon-container" onClick={toggleFavorite}>
             {isFavorite ? (
               <FaHeart className="fav-icon filled" />
@@ -145,7 +145,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
 
             <div className="modal-content-grid">
               <div className="modal-left">
-                <img src={url + "/images/" + image} alt={name} className="modal-food-img" />
+                <img src={image} alt={name} className="modal-food-img" />
                 <div className="modal-food-meta">
                   <h2>{name}</h2>
                   <div className="rating-spice-row">
