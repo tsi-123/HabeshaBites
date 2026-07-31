@@ -32,6 +32,7 @@ const PlaceOrder = () => {
     event.preventDefault();
     let orderItems = [];
     food_list.forEach((item) => {
+      if (!item) return;
       const quantity = cartItems[item._id] || 0;
       if (quantity > 0 && item?.price != null) {
         orderItems.push({ ...item, quantity });

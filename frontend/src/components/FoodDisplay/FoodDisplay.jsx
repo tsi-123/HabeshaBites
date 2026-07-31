@@ -9,6 +9,8 @@ const FoodDisplay = ({ category, search }) => {
   const { food_list } = useContext(StoreContext);
 
   const filteredFoods = food_list.filter((item) => {
+    if (!item) return false;
+
     const itemCategory = item.category || "";
     const itemName = item.name || "";
     const itemDesc = item.description || "";

@@ -9,7 +9,7 @@ const Favourites = () => {
   const { favorites, food_list } = useContext(StoreContext);
   const navigate = useNavigate();
 
-  const favoriteDishes = food_list.filter((item) => favorites.includes(item._id));
+  const favoriteDishes = food_list.filter((item) => item && favorites.includes(item._id));
 
   return (
     <div className="favourites-page">
