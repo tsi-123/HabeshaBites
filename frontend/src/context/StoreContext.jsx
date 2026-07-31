@@ -34,7 +34,14 @@ const StoreContextProvider = (props) => {
   };
 
   const removeFromCart = async (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+    setCartItems((prev) => {
+      const currentCount = prev[itemId] || 0;
+      if (currentCount <= 1) {
+        const { [itemId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [itemId]: currentCount - 1 };
+    });
     if (token) {
       const response= await axios.post(
         url + "/api/cart/remove",
@@ -52,9 +59,13 @@ const StoreContextProvider = (props) => {
   const getTotalCartAmount = () => {
     let totalAmount = 0;
     for (const item in cartItems) {
-      if (cartItems[item] > 0) {
-        let itemInfo = food_list.find((product) => product._id === item);
-        totalAmount += itemInfo.price * cartItems[item];
+      const quantity = cartItems[item] || 0;
+      if (quantity > 0) {
+        const itemInfo = food_list.find((product) => product._id === item);
+        if (!itemInfo) {
+          continue;
+        }
+        totalAmount += itemInfo.price * quantity;
       }
     }
     return totalAmount;
