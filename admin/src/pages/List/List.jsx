@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import "./List.css";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -8,17 +9,17 @@ import { useNavigate } from "react-router-dom";
 
 const List = ({ url }) => {
   const navigate = useNavigate();
-  const { token,admin } = useContext(StoreContext);
+  const { token, admin } = useContext(StoreContext);
   const [list, setList] = useState([]);
 
-  const fetchList = async () => {
+  const fetchList = useCallback(async () => {
     const response = await axios.get(`${url}/api/food/list`);
     if (response.data.success) {
       setList(response.data.data);
     } else {
       toast.error("Error");
     }
-  };
+  }, [url]);
 
   const removeFood = async (foodId) => {
     const response = await axios.post(
@@ -39,7 +40,7 @@ const List = ({ url }) => {
       navigate("/");
     }
     fetchList();
-  }, []);
+  }, [admin, fetchList, navigate, token]);
 
   return (
     <div className="list add flex-col">
@@ -68,6 +69,10 @@ const List = ({ url }) => {
       </div>
     </div>
   );
+};
+
+List.propTypes = {
+  url: PropTypes.string.isRequired,
 };
 
 export default List;

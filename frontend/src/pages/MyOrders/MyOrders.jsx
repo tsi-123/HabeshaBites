@@ -121,7 +121,7 @@ const MyOrders = () => {
         <div className="orders-empty-state">
           <FiInbox className="empty-icon" />
           <h3>No Orders Found</h3>
-          <p>You don't have any orders in this category. Place a new order to get started!</p>
+          <p>You don&apos;t have any orders in this category. Place a new order to get started!</p>
         </div>
       ) : (
         <div className="container">
@@ -191,7 +191,7 @@ const MyOrders = () => {
             <div className="review-items-container">
               {reviewOrder.items.map((item) => (
                 <div key={item._id} className="review-item-row">
-                  <img src={url + "/images/" + item.image} alt={item.name} className="review-item-img" />
+                  <img src={ item.image} alt={item.name} className="review-item-img" />
                   <div className="review-item-details">
                     <h4>{item.name}</h4>
                     

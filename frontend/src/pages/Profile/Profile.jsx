@@ -36,7 +36,7 @@ const Profile = () => {
           setProfile(response.data.user);
           setStats(response.data.statistics);
           if (response.data.user.profilePicture) {
-            setImagePreview(`${url}/images/${response.data.user.profilePicture}`);
+            setImagePreview(response.data.user.profilePicture);
           }
         }
       } catch (error) {
