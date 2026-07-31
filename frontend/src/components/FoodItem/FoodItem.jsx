@@ -7,6 +7,7 @@ import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { normalizeImageUrl } from "../../utils/imageUtils";
 
 const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLevel }) => {
   const {
@@ -29,6 +30,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
   const [submittingReview, setSubmittingReview] = useState(false);
 
   const isFavorite = favorites && favorites.includes(id);
+  const normalizedImage = normalizeImageUrl(image);
 
   const toggleFavorite = (e) => {
     e.stopPropagation();
@@ -97,7 +99,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
     <>
       <div className="food-item">
         <div className="food-item-img-container">
-        <img src={image} alt="" className="food-item-image" />
+        <img src={normalizedImage} alt="" className="food-item-image" />
           <div className="favorite-icon-container" onClick={toggleFavorite}>
             {isFavorite ? (
               <FaHeart className="fav-icon filled" />
@@ -145,7 +147,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
 
             <div className="modal-content-grid">
               <div className="modal-left">
-                <img src={image} alt={name} className="modal-food-img" />
+                <img src={normalizedImage} alt={name} className="modal-food-img" />
                 <div className="modal-food-meta">
                   <h2>{name}</h2>
                   <div className="rating-spice-row">

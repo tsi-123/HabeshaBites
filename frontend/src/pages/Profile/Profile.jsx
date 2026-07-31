@@ -3,6 +3,7 @@ import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FiUser, FiPhone, FiMapPin, FiLock, FiTrendingUp, FiShoppingBag, FiAward } from "react-icons/fi";
+import { normalizeImageUrl } from "../../utils/imageUtils";
 import "./Profile.css";
 
 const Profile = () => {
@@ -36,7 +37,7 @@ const Profile = () => {
           setProfile(response.data.user);
           setStats(response.data.statistics);
           if (response.data.user.profilePicture) {
-            setImagePreview(response.data.user.profilePicture);
+            setImagePreview(normalizeImageUrl(response.data.user.profilePicture));
           }
         }
       } catch (error) {
