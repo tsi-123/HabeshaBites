@@ -29,7 +29,8 @@ const MyOrders = () => {
         { headers: { token } }
       );
       if (response.data.success) {
-        setData(response.data.data);
+        const ordersData = Array.isArray(response.data.data) ? response.data.data : [];
+        setData(ordersData);
       }
     } catch (error) {
       console.log(error);
@@ -78,13 +79,15 @@ const MyOrders = () => {
   };
 
   // Filter orders
-  const filteredOrders = data.filter((order) => {
-    if (filter === "All") return true;
-    if (filter === "Preparing") return order.status === "Food Processing";
-    if (filter === "Out for Delivery") return order.status === "Out for delivery";
-    if (filter === "Delivered") return order.status === "Delivered";
-    return true;
-  });
+  const filteredOrders = Array.isArray(data)
+    ? data.filter((order) => {
+        if (filter === "All") return true;
+        if (filter === "Preparing") return order?.status === "Food Processing";
+        if (filter === "Out for Delivery") return order?.status === "Out for delivery";
+        if (filter === "Delivered") return order?.status === "Delivered";
+        return true;
+      })
+    : [];
 
   return (
     <div className="my-orders">
@@ -127,9 +130,10 @@ const MyOrders = () => {
       ) : (
         <div className="container">
           {filteredOrders.map((order, index) => {
-            const orderDate = new Date(order.date);
+            const orderDate = order?.date ? new Date(order.date) : new Date();
             const deliveryTime = new Date(orderDate.getTime() + 35 * 60 * 1000);
-            const shortId = order._id.slice(-6).toUpperCase();
+            const shortId = order?._id ? order._id.slice(-6).toUpperCase() : "N/A";
+            const orderItems = Array.isArray(order?.items) ? order.items : [];
 
             return (
               <div key={index} className="my-orders-order">
@@ -141,15 +145,15 @@ const MyOrders = () => {
                     {orderDate.toLocaleDateString()} {orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                   <p className="order-items-list">
-                    {order.items.map((item, idx) => {
-                      return item.name + " x " + item.quantity + (idx === order.items.length - 1 ? "" : ", ");
+                    {orderItems.map((item, idx) => {
+                      return (item?.name || "Dish") + " x " + (item?.quantity || 0) + (idx === orderItems.length - 1 ? "" : ", ");
                     })}
                   </p>
                 </div>
 
                 <div className="order-financials">
-                  <p className="order-amount">${order.amount}.00</p>
-                  <p className="order-qty">Items: {order.items.length}</p>
+                  <p className="order-amount">${Number(order?.amount ?? 0)}.00</p>
+                  <p className="order-qty">Items: {orderItems.length}</p>
                 </div>
 
                 <div className="order-status-eta">
@@ -190,22 +194,24 @@ const MyOrders = () => {
             </div>
             
             <div className="review-items-container">
-              {reviewOrder.items.map((item) => (
-                <div key={item._id} className="review-item-row">
-                  <img src={normalizeImageUrl(item.image)} alt={item.name} className="review-item-img" />
+              {(Array.isArray(reviewOrder?.items) ? reviewOrder.items : []).map((item, index) => {
+                const reviewItemId = item?._id || `${reviewOrder?._id || "order"}-${index}`;
+                return (
+                <div key={reviewItemId} className="review-item-row">
+                  <img src={normalizeImageUrl(item?.image)} alt={item?.name || "Dish"} className="review-item-img" />
                   <div className="review-item-details">
-                    <h4>{item.name}</h4>
+                    <h4>{item?.name || "Dish"}</h4>
                     
-                    <form onSubmit={(e) => handleReviewSubmit(item._id, e)} className="row-review-form">
+                    <form onSubmit={(e) => handleReviewSubmit(reviewItemId, e)} className="row-review-form">
                       <div className="row-stars-select">
                         <span>Rating:</span>
                         <div className="row-stars-input">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                               key={star}
-                              className={(reviewRatings[item._id] || 5) >= star ? "star active" : "star"}
+                              className={(reviewRatings[reviewItemId] || 5) >= star ? "star active" : "star"}
                               onClick={() =>
-                                setReviewRatings((prev) => ({ ...prev, [item._id]: star }))
+                                setReviewRatings((prev) => ({ ...prev, [reviewItemId]: star }))
                               }
                             />
                           ))}
@@ -216,9 +222,9 @@ const MyOrders = () => {
                         <input
                           type="text"
                           placeholder="What did you think of this dish?"
-                          value={reviewComments[item._id] || ""}
+                          value={reviewComments[reviewItemId] || ""}
                           onChange={(e) =>
-                            setReviewComments((prev) => ({ ...prev, [item._id]: e.target.value }))
+                            setReviewComments((prev) => ({ ...prev, [reviewItemId]: e.target.value }))
                           }
                           required
                         />
@@ -229,7 +235,8 @@ const MyOrders = () => {
                     </form>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

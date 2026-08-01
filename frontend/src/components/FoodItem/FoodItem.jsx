@@ -50,8 +50,11 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
     try {
       const response = await axios.get(`${url}/api/reviews/${id}`);
       if (response.data.success) {
-        setReviews(response.data.reviews);
-        setAvgRating(response.data.avgRating || rating);
+        const reviewsData = Array.isArray(response.data.reviews) ? response.data.reviews : [];
+        setReviews(reviewsData);
+        setAvgRating(
+          Number.isFinite(Number(response.data.avgRating)) ? Number(response.data.avgRating) : rating
+        );
       }
     } catch (error) {
       console.log("Error fetching reviews", error);

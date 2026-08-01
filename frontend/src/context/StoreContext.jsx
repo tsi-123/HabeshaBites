@@ -164,7 +164,11 @@ const StoreContextProvider = (props) => {
         headers: { token: userToken },
       });
       if (response.data.success) {
-        setFavorites(response.data.data.map((item) => item._id));
+        const favoritesData = Array.isArray(response.data.data) ? response.data.data : [];
+        const normalizedFavorites = favoritesData
+          .map((item) => item?._id)
+          .filter(Boolean);
+        setFavorites(normalizedFavorites);
       }
     } catch (error) {
       console.log("Error fetching favorites", error);
