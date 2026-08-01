@@ -38,7 +38,7 @@ const PlaceOrder = () => {
     safeFoodList.forEach((item) => {
       if (!item || !item._id) return;
       const quantity = Number(safeCartItems[item._id] || 0);
-      const price = Number(item.price);
+      const price = Number(item?.price ?? 0);
       if (quantity > 0 && Number.isFinite(price)) {
         orderItems.push({ ...item, quantity, price });
       }

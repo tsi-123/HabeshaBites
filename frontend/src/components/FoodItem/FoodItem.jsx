@@ -29,7 +29,7 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
   const [comment, setComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  const isFavorite = favorites && favorites.includes(id);
+  const isFavorite = Array.isArray(favorites) && favorites.includes(id);
   const normalizedImage = normalizeImageUrl(image);
   const safeCartItems = cartItems || {};
   const displayPrice = Number.isFinite(Number(price)) ? Number(price) : 0;

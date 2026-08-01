@@ -28,14 +28,14 @@ const Favourites = () => {
         <div className="favourites-grid">
           {favoriteDishes.map((item) => (
             <FoodItem
-              key={item._id}
-              id={item._id}
-              name={item.name}
-              description={item.description}
-              price={item.price}
-              image={item.image}
-              rating={item.rating}
-              spiceLevel={item.spiceLevel}
+              key={item?._id || Math.random()}
+              id={item?._id || ""}
+              name={item?.name || "Delicious Dish"}
+              description={item?.description || "A flavorful dish"}
+              price={item?.price ?? 0}
+              image={item?.image || ""}
+              rating={Number.isFinite(Number(item?.rating)) ? Number(item.rating) : 4.8}
+              spiceLevel={item?.spiceLevel || ""}
             />
           ))}
         </div>

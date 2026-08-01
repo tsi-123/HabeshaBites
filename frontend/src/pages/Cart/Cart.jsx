@@ -36,16 +36,18 @@ const Cart = () => {
         ) : (
           safeFoodList.map((item) => {
             if (!item || !item._id) return null;
-            const itemId = item._id;
+            const itemId = item?._id;
+            if (!itemId) return null;
+
             const quantity = Number(safeCartItems[itemId] || 0);
-            const price = Number(item.price);
+            const price = Number(item?.price ?? 0);
 
             if (quantity > 0 && Number.isFinite(price)) {
               return (
                 <div key={itemId}>
                   <div className="cart-items-title cart-items-item">
-                    <img src={normalizeImageUrl(item.image)} alt="" />
-                    <p>{item.name || "Delicious Dish"}</p>
+                    <img src={normalizeImageUrl(item?.image)} alt="" />
+                    <p>{item?.name || "Delicious Dish"}</p>
                     <p>${price}</p>
                     <p>{quantity}</p>
                     <p>${price * quantity}</p>
