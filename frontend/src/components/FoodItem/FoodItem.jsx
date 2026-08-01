@@ -32,6 +32,9 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
   const isFavorite = favorites && favorites.includes(id);
   const normalizedImage = normalizeImageUrl(image);
   const safeCartItems = cartItems || {};
+  const displayPrice = Number.isFinite(Number(price)) ? Number(price) : 0;
+  const displayName = name || "Delicious Dish";
+  const displayDescription = description || "A flavorful dish";
 
   const toggleFavorite = (e) => {
     e.stopPropagation();
@@ -129,12 +132,12 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
         </div>
         <div className="food-item-info" onClick={() => setShowDetails(true)}>
           <div className="food-item-name-rating">
-            <p>{name}</p>
+            <p>{displayName}</p>
             <span>⭐ {avgRating}</span>
             {spiceLevel && <span className="spice-tag">{spiceLevel}</span>}
           </div>
-          <p className="food-item-desc">{description}</p>
-          <p className="food-item-price">${price}</p>
+          <p className="food-item-desc">{displayDescription}</p>
+          <p className="food-item-price">${displayPrice}</p>
         </div>
       </div>
 
@@ -148,15 +151,15 @@ const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLeve
 
             <div className="modal-content-grid">
               <div className="modal-left">
-                <img src={normalizedImage} alt={name} className="modal-food-img" />
+                <img src={normalizedImage} alt={displayName} className="modal-food-img" />
                 <div className="modal-food-meta">
-                  <h2>{name}</h2>
+                  <h2>{displayName}</h2>
                   <div className="rating-spice-row">
                     <span className="rating-badge">⭐ {avgRating}</span>
                     {spiceLevel && <span className="spice-badge">{spiceLevel} Spice</span>}
                   </div>
-                  <p className="modal-food-desc">{description}</p>
-                  <h3 className="modal-food-price">${price}</h3>
+                  <p className="modal-food-desc">{displayDescription}</p>
+                  <h3 className="modal-food-price">${displayPrice}</h3>
                 </div>
               </div>
 

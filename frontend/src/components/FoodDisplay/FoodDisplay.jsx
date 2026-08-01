@@ -6,19 +6,20 @@ import FoodItem from "../FoodItem/FoodItem";
 import { FiAlertCircle } from "react-icons/fi";
 
 const FoodDisplay = ({ category, search }) => {
-  const { food_list } = useContext(StoreContext);
+  const { food_list, foodLoading, foodError } = useContext(StoreContext);
+  const safeFoodList = Array.isArray(food_list) ? food_list : [];
 
-  const filteredFoods = food_list.filter((item) => {
-    if (!item) return false;
+  const filteredFoods = safeFoodList.filter((item) => {
+    if (!item || !item._id) return false;
 
     const itemCategory = item.category || "";
     const itemName = item.name || "";
     const itemDesc = item.description || "";
+    const searchTerm = typeof search === "string" ? search.toLowerCase().trim() : "";
 
     const matchesCategory =
       category === "All" || category.toLowerCase() === itemCategory.toLowerCase();
 
-    const searchTerm = search.toLowerCase().trim();
     const matchesSearch =
       searchTerm === "" ||
       itemName.toLowerCase().includes(searchTerm) ||
@@ -27,6 +28,32 @@ const FoodDisplay = ({ category, search }) => {
 
     return matchesCategory && matchesSearch;
   });
+
+  if (foodLoading) {
+    return (
+      <div className="food-display" id="food-display">
+        <h2>Top dishes near you</h2>
+        <div className="search-no-results">
+          <FiAlertCircle className="no-results-icon" />
+          <h3>Loading menu...</h3>
+          <p>Fetching the latest dishes from our kitchen.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (foodError && filteredFoods.length === 0) {
+    return (
+      <div className="food-display" id="food-display">
+        <h2>Top dishes near you</h2>
+        <div className="search-no-results">
+          <FiAlertCircle className="no-results-icon" />
+          <h3>Menu unavailable</h3>
+          <p>{foodError}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="food-display" id="food-display">
@@ -44,12 +71,12 @@ const FoodDisplay = ({ category, search }) => {
             <FoodItem
               key={item._id}
               id={item._id}
-              name={item.name}
-              description={item.description}
-              price={item.price}
-              image={item.image}
-              rating={item.rating}
-              spiceLevel={item.spiceLevel}
+              name={item.name || "Delicious Dish"}
+              description={item.description || "A flavorful dish"}
+              price={item.price ?? 0}
+              image={item.image || ""}
+              rating={Number.isFinite(Number(item.rating)) ? Number(item.rating) : 4.8}
+              spiceLevel={item.spiceLevel || ""}
             />
           ))}
         </div>

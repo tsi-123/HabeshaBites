@@ -5,13 +5,37 @@ import { toast } from "react-toastify";
 
 export const StoreContext = createContext(null);
 
+const normalizeFoodList = (foods) =>
+  Array.isArray(foods) ? foods.filter((item) => item && item._id != null) : [];
+
+const sanitizeCartItems = (cartData, menuItems = []) => {
+  if (!cartData || typeof cartData !== "object") return {};
+
+  const validFoodIds = new Set(menuItems.map((item) => item._id));
+  const sanitized = {};
+
+  Object.entries(cartData).forEach(([itemId, quantity]) => {
+    const numericQuantity = Number(quantity);
+    if (
+      itemId &&
+      validFoodIds.has(itemId) &&
+      Number.isFinite(numericQuantity) &&
+      numericQuantity > 0
+    ) {
+      sanitized[itemId] = numericQuantity;
+    }
+  });
+
+  return sanitized;
+};
+
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
-  // FIXED: was hardcoded "http://localhost:4000" — breaks in production.
-  // Now reads from VITE_API_URL env variable. Falls back to localhost for local dev.
   const url = import.meta.env.VITE_API_URL || "http://localhost:4000";
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
+  const [foodLoading, setFoodLoading] = useState(true);
+  const [foodError, setFoodError] = useState("");
 
   const addToCart = async (itemId) => {
     const safeCart = cartItems || {};
@@ -21,15 +45,15 @@ const StoreContextProvider = (props) => {
       setCartItems((prev) => ({ ...(prev || {}), [itemId]: (prev || {})[itemId] + 1 }));
     }
     if (token) {
-      const response=await axios.post(
+      const response = await axios.post(
         url + "/api/cart/add",
         { itemId },
         { headers: { token } }
       );
-      if(response.data.success){
-        toast.success("item Added to Cart")
-      }else{
-        toast.error("Something went wrong")
+      if (response.data.success) {
+        toast.success("item Added to Cart");
+      } else {
+        toast.error("Something went wrong");
       }
     }
   };
@@ -44,60 +68,91 @@ const StoreContextProvider = (props) => {
       return { ...prev, [itemId]: currentCount - 1 };
     });
     if (token) {
-      const response= await axios.post(
+      const response = await axios.post(
         url + "/api/cart/remove",
         { itemId },
         { headers: { token } }
       );
-      if(response.data.success){
-        toast.success("item Removed from Cart")
-      }else{
-        toast.error("Something went wrong")
+      if (response.data.success) {
+        toast.success("item Removed from Cart");
+      } else {
+        toast.error("Something went wrong");
       }
     }
   };
 
   const getTotalCartAmount = () => {
     if (!cartItems || typeof cartItems !== "object") return 0;
+    if (!Array.isArray(food_list)) return 0;
+
     let totalAmount = 0;
-    for (const item in cartItems) {
-      const quantity = cartItems[item] || 0;
-      if (quantity > 0) {
-        const itemInfo = food_list.find((product) => product._id === item);
-        if (!itemInfo || itemInfo.price == null) {
-          continue;
-        }
-        totalAmount += itemInfo.price * quantity;
+
+    Object.entries(cartItems).forEach(([itemId, quantity]) => {
+      const numericQuantity = Number(quantity);
+      if (!itemId || !Number.isFinite(numericQuantity) || numericQuantity <= 0) {
+        return;
       }
-    }
+
+      const itemInfo = food_list.find((product) => product && product._id === itemId);
+      if (!itemInfo || itemInfo.price == null) {
+        console.warn("Skipping cart item without a valid food record", itemId);
+        return;
+      }
+
+      const numericPrice = Number(itemInfo.price);
+      if (Number.isFinite(numericPrice)) {
+        totalAmount += numericPrice * numericQuantity;
+      }
+    });
+
     return totalAmount;
   };
 
   const fetchFoodList = async () => {
-    const response = await axios.get(url + "/api/food/list");
-    if (response.data.success) {
-      const normalizedFoodList = Array.isArray(response.data.data)
-        ? response.data.data.filter((item) => item && item._id != null)
-        : [];
-      setFoodList(normalizedFoodList);
-    } else {
-      alert("Error! Products are not fetching..");
+    setFoodLoading(true);
+    setFoodError("");
+
+    try {
+      const response = await axios.get(url + "/api/food/list");
+      if (response.data && response.data.success) {
+        const normalizedFoodList = normalizeFoodList(response.data.data);
+        setFoodList(normalizedFoodList);
+        return normalizedFoodList;
+      }
+
+      setFoodError("Unable to load menu right now.");
+      setFoodList([]);
+      return [];
+    } catch (error) {
+      console.error("Error loading food list:", error);
+      setFoodError("Unable to load menu right now.");
+      setFoodList([]);
+      return [];
+    } finally {
+      setFoodLoading(false);
     }
   };
 
-  const loadCardData = async (token) => {
+  const loadCardData = async (userToken, menuItems = []) => {
     try {
       const response = await axios.post(
         url + "/api/cart/get",
         {},
-        { headers: { token } }
+        { headers: { token: userToken } }
       );
-      // Guard: cartData may be undefined for new users or empty carts
+
       if (response.data && response.data.cartData) {
-        setCartItems(response.data.cartData);
+        const sanitizedCart = sanitizeCartItems(response.data.cartData, menuItems);
+        if (Object.keys(sanitizedCart).length !== Object.keys(response.data.cartData).length) {
+          console.warn("Removed stale cart items that no longer exist in the menu", response.data.cartData);
+        }
+        setCartItems(sanitizedCart);
+      } else {
+        setCartItems({});
       }
     } catch (error) {
-      console.log("Error loading cart data:", error);
+      console.error("Error loading cart data:", error);
+      setCartItems({});
     }
   };
 
@@ -160,11 +215,11 @@ const StoreContextProvider = (props) => {
 
   useEffect(() => {
     async function loadData() {
-      await fetchFoodList();
+      const menuItems = await fetchFoodList();
       if (localStorage.getItem("token")) {
         const storedToken = localStorage.getItem("token");
         setToken(storedToken);
-        await loadCardData(storedToken);
+        await loadCardData(storedToken, menuItems);
       }
     }
     loadData();
@@ -180,6 +235,8 @@ const StoreContextProvider = (props) => {
 
   const contextValue = {
     food_list,
+    foodLoading,
+    foodError,
     cartItems,
     setCartItems,
     addToCart,
@@ -192,6 +249,7 @@ const StoreContextProvider = (props) => {
     addToFavorites,
     removeFromFavorites,
   };
+
   return (
     <StoreContext.Provider value={contextValue}>
       {props.children}

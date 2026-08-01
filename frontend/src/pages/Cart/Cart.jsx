@@ -10,9 +10,13 @@ const Cart = () => {
     cartItems,
     removeFromCart,
     getTotalCartAmount,
+    foodLoading,
   } = useContext(StoreContext);
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const safeFoodList = Array.isArray(food_list) ? food_list : [];
+  const safeCartItems = cartItems && typeof cartItems === "object" ? cartItems : {};
+  const subtotal = getTotalCartAmount();
 
   return (
     <div className="cart">
@@ -27,30 +31,35 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {food_list.map((item) => {
-          if (!item) return null;
-          const safeCartItems = cartItems || {};
-          const itemId = item._id;
-          const quantity = itemId ? safeCartItems[itemId] || 0 : 0;
-          if (quantity > 0 && item?.price != null) {
-            return (
-              <div key={itemId}>
-                <div className="cart-items-title cart-items-item">
-                  <img src={normalizeImageUrl(item.image)} alt="" />
-                  <p>{item.name}</p>
-                  <p>${item.price}</p>
-                  <p>{quantity}</p>
-                  <p>${item.price * quantity}</p>
-                  <p onClick={() => removeFromCart(itemId)} className="cross">
-                    x
-                  </p>
+        {foodLoading && !safeFoodList.length ? (
+          <p>Loading your cart...</p>
+        ) : (
+          safeFoodList.map((item) => {
+            if (!item || !item._id) return null;
+            const itemId = item._id;
+            const quantity = Number(safeCartItems[itemId] || 0);
+            const price = Number(item.price);
+
+            if (quantity > 0 && Number.isFinite(price)) {
+              return (
+                <div key={itemId}>
+                  <div className="cart-items-title cart-items-item">
+                    <img src={normalizeImageUrl(item.image)} alt="" />
+                    <p>{item.name || "Delicious Dish"}</p>
+                    <p>${price}</p>
+                    <p>{quantity}</p>
+                    <p>${price * quantity}</p>
+                    <p onClick={() => removeFromCart(itemId)} className="cross">
+                      x
+                    </p>
+                  </div>
+                  <hr />
                 </div>
-                <hr />
-              </div>
-            );
-          }
-          return null;
-        })}
+              );
+            }
+            return null;
+          })
+        )}
       </div>
       <div className="cart-bottom">
         <div className="cart-total">
@@ -58,20 +67,20 @@ const Cart = () => {
           <div>
             <div className="cart-total-details">
               <p>Subtotals</p>
-              <p>${getTotalCartAmount()}</p>
+              <p>${subtotal}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>${getTotalCartAmount()===0?0:2}</p>
+              <p>${subtotal === 0 ? 0 : 2}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <b>Total</b>
-              <b>${getTotalCartAmount()===0?0:getTotalCartAmount()+2}</b>
+              <b>${subtotal === 0 ? 0 : subtotal + 2}</b>
             </div>
           </div>
-          <button onClick={()=>navigate('/order')}>PROCEED TO CHECKOUT</button>
+          <button onClick={() => navigate("/order")}>PROCEED TO CHECKOUT</button>
           <button className="split-btn" onClick={() => navigate("/split-bill")}> Split Bill </button>
         </div>
         <div className="cart-promocode">
