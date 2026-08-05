@@ -94,15 +94,15 @@ const StoreContextProvider = (props) => {
       }
 
       const itemInfo = food_list.find((product) => product?._id === itemId);
-      if (!itemInfo || itemInfo.price == null) {
+      const normalizedItem = itemInfo && typeof itemInfo === "object" ? itemInfo : null;
+      const numericPrice = Number(normalizedItem?.price ?? 0);
+
+      if (!normalizedItem || !Number.isFinite(numericPrice)) {
         console.warn("Skipping cart item without a valid food record", itemId);
         return;
       }
 
-      const numericPrice = Number(itemInfo?.price ?? 0);
-      if (Number.isFinite(numericPrice)) {
-        totalAmount += numericPrice * numericQuantity;
-      }
+      totalAmount += numericPrice * numericQuantity;
     });
 
     return totalAmount;

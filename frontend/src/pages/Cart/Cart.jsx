@@ -35,14 +35,15 @@ const Cart = () => {
           <p>Loading your cart...</p>
         ) : (
           safeFoodList.map((item) => {
-            if (!item || !item._id) return null;
+            if (!item || typeof item !== "object" || !item._id) return null;
             const itemId = item?._id;
             if (!itemId) return null;
 
             const quantity = Number(safeCartItems[itemId] || 0);
             const price = Number(item?.price ?? 0);
+            const hasValidPrice = Number.isFinite(price) && price >= 0;
 
-            if (quantity > 0 && Number.isFinite(price)) {
+            if (quantity > 0 && hasValidPrice) {
               return (
                 <div key={itemId}>
                   <div className="cart-items-title cart-items-item">

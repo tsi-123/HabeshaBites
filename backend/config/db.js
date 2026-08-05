@@ -80,6 +80,13 @@ export const connectDB = async () => {
     throw new Error("MONGO_URL is not defined in environment variables.");
   }
 
+  // Prevent unhandled EventEmitter 'error' process crash on connection drop
+  if (!mongoose.connection.listeners("error").length) {
+    mongoose.connection.on("error", (err) => {
+      console.error("⚠️ MongoDB runtime connection error:", err.message);
+    });
+  }
+
   const baseOptions = {
     serverSelectionTimeoutMS: 15000,
     socketTimeoutMS: 45000,
@@ -93,9 +100,11 @@ export const connectDB = async () => {
     directUrl = await srvToDirectUrl(mongoUrl);
   }
 
+  // Prioritize original SRV URL for standard Atlas replica set connections in production.
+  // Fall back to custom direct URL if SRV fails (e.g. Windows dev environment DNS issues).
   const urlsToTry = [
-    ...(directUrl ? [{ url: directUrl, label: "direct resolved URL", opts: baseOptions }] : []),
     { url: mongoUrl, label: "original SRV URL", opts: baseOptions },
+    ...(directUrl ? [{ url: directUrl, label: "direct resolved URL", opts: baseOptions }] : []),
   ];
 
   for (const { url, label, opts } of urlsToTry) {

@@ -36,10 +36,11 @@ const PlaceOrder = () => {
     event.preventDefault();
     const orderItems = [];
     safeFoodList.forEach((item) => {
-      if (!item || !item._id) return;
+      if (!item || typeof item !== "object" || !item._id) return;
       const quantity = Number(safeCartItems[item._id] || 0);
       const price = Number(item?.price ?? 0);
-      if (quantity > 0 && Number.isFinite(price)) {
+      const hasValidPrice = Number.isFinite(price) && price >= 0;
+      if (quantity > 0 && hasValidPrice) {
         orderItems.push({ ...item, quantity, price });
       }
     });
