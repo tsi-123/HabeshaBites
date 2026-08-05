@@ -6,12 +6,20 @@ import { toast } from "react-toastify";
 export const StoreContext = createContext(null);
 
 const normalizeFoodList = (foods) =>
-  Array.isArray(foods) ? foods.filter((item) => item && item._id != null) : [];
+  Array.isArray(foods)
+    ? foods
+        .filter((item) => item && typeof item === "object" && item._id != null)
+        .map((item) => ({
+          ...item,
+          price: Number.isFinite(Number(item.price)) ? Number(item.price) : 0,
+        }))
+    : [];
 
 const sanitizeCartItems = (cartData, menuItems = []) => {
   if (!cartData || typeof cartData !== "object") return {};
 
-  const validFoodIds = new Set(menuItems.map((item) => item._id));
+  const safeMenuItems = Array.isArray(menuItems) ? menuItems : [];
+  const validFoodIds = new Set(safeMenuItems.map((item) => item?._id).filter(Boolean));
   const sanitized = {};
 
   Object.entries(cartData).forEach(([itemId, quantity]) => {
