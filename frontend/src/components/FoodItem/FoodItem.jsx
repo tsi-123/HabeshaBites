@@ -9,7 +9,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { normalizeImageUrl } from "../../utils/imageUtils";
 
-const FoodItem = ({ id, name, price, description, image, rating = 4.8, spiceLevel }) => {
+const FoodItem = ({
+  id = "",
+  name = "Delicious Dish",
+  price = 0,
+  description = "A flavorful dish",
+  image = "",
+  rating = 4.8,
+  spiceLevel = "",
+}) => {
   const {
     cartItems,
     addToCart,
