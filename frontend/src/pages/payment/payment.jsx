@@ -91,7 +91,7 @@ const Payment = () => {
         
         <div className="amount-section">
           <h3>Amount to Pay</h3>
-          <h2>ETB {share.amount.toFixed(2)}</h2>
+          <h2>ETB {Number(share?.amount ?? 0).toFixed(2)}</h2>
         </div>
 
         <div className="details-section">

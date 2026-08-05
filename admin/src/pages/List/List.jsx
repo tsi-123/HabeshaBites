@@ -54,14 +54,15 @@ const List = ({ url }) => {
           <b>Price</b>
           <b>Action</b>
         </div>
-        {list.map((item, index) => {
+        {(Array.isArray(list) ? list : []).map((item, index) => {
+          if (!item) return null;
           return (
-            <div key={index} className="list-table-format">
+            <div key={item._id || index} className="list-table-format">
               <img src={normalizeImageUrl(item.image)} alt="" />
-              <p>{item.name}</p>
-              <p>{item.category}</p>
-              <p>${item.price}</p>
-              <p onClick={() => removeFood(item._id)} className="cursor">
+              <p>{item.name || "Unnamed"}</p>
+              <p>{item.category || "N/A"}</p>
+              <p>${item.price ?? 0}</p>
+              <p onClick={() => item._id && removeFood(item._id)} className="cursor">
                 X
               </p>
             </div>

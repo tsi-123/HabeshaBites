@@ -71,7 +71,7 @@ const Dashboard = ({ url }) => {
         <div className="stat-card revenue">
           <div className="card-info">
             <p className="card-label">Total Revenue</p>
-            <h3>ETB {stats.totalRevenue.toFixed(2)}</h3>
+            <h3>ETB {Number(stats?.totalRevenue ?? 0).toFixed(2)}</h3>
           </div>
           <div className="card-icon">
             <FiDollarSign />
@@ -81,7 +81,7 @@ const Dashboard = ({ url }) => {
         <div className="stat-card orders">
           <div className="card-info">
             <p className="card-label">Total Orders</p>
-            <h3>{stats.totalOrders}</h3>
+            <h3>{stats?.totalOrders ?? 0}</h3>
           </div>
           <div className="card-icon">
             <FiShoppingBag />
@@ -91,9 +91,9 @@ const Dashboard = ({ url }) => {
         <div className="stat-card split-stats">
           <div className="card-info">
             <p className="card-label">Split Bill Revenue</p>
-            <h3>ETB {stats.splitStats.splitRevenue.toFixed(2)}</h3>
+            <h3>ETB {Number(stats?.splitStats?.splitRevenue ?? 0).toFixed(2)}</h3>
             <p className="card-subtext">
-              {stats.splitStats.completedSplits} of {stats.splitStats.totalSplits} splits settled
+              {stats?.splitStats?.completedSplits ?? 0} of {stats?.splitStats?.totalSplits ?? 0} splits settled
             </p>
           </div>
           <div className="card-icon">
@@ -110,10 +110,10 @@ const Dashboard = ({ url }) => {
           <div className="dashboard-section popular-foods">
             <h3>🔥 Popular Dishes / Top-Selling</h3>
             <div className="foods-list">
-              {stats.popularFoods.length === 0 ? (
+              {(stats?.popularFoods || []).length === 0 ? (
                 <p className="empty-text">No dishes sold yet.</p>
               ) : (
-                stats.popularFoods.map((food, index) => (
+                (stats?.popularFoods || []).map((food, index) => (
                   <div key={index} className="food-item-row">
                     <span className="rank">#{index + 1}</span>
                     <span className="name">{food.name}</span>
@@ -130,17 +130,17 @@ const Dashboard = ({ url }) => {
               <div className="summary-box">
                 <FiShoppingBag className="icon-blue" />
                 <p>Total Splits</p>
-                <h4>{stats.splitStats.totalSplits}</h4>
+                <h4>{stats?.splitStats?.totalSplits ?? 0}</h4>
               </div>
               <div className="summary-box">
                 <FiCheckCircle className="icon-green" />
                 <p>Settled Splits</p>
-                <h4>{stats.splitStats.completedSplits}</h4>
+                <h4>{stats?.splitStats?.completedSplits ?? 0}</h4>
               </div>
               <div className="summary-box">
                 <FiClock className="icon-yellow" />
                 <p>Pending Splits</p>
-                <h4>{stats.splitStats.pendingSplits}</h4>
+                <h4>{stats?.splitStats?.pendingSplits ?? 0}</h4>
               </div>
             </div>
           </div>
@@ -151,26 +151,27 @@ const Dashboard = ({ url }) => {
           <div className="dashboard-section recent-orders">
             <h3>🕒 Recent Orders</h3>
             <div className="orders-list">
-              {stats.recentOrders.length === 0 ? (
+              {(stats?.recentOrders || []).length === 0 ? (
                 <p className="empty-text">No orders placed yet.</p>
               ) : (
-                stats.recentOrders.map((order) => {
-                  const orderDate = new Date(order.date);
+                (stats?.recentOrders || []).map((order) => {
+                  const orderDate = new Date(order.date || Date.now());
+                  const orderItems = Array.isArray(order.items) ? order.items : [];
                   return (
                     <div key={order._id} className="recent-order-row">
                       <div className="order-row-meta">
-                        <span className="order-row-num">#{order._id.slice(-6).toUpperCase()}</span>
+                        <span className="order-row-num">#{order._id ? order._id.slice(-6).toUpperCase() : "N/A"}</span>
                         <span className="order-row-date">
                           {orderDate.toLocaleDateString()} {orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       <div className="order-row-items">
-                        {order.items.map((item) => item.name + " x " + item.quantity).join(", ")}
+                        {orderItems.map((item) => (item?.name || "Item") + " x " + (item?.quantity || 1)).join(", ")}
                       </div>
                       <div className="order-row-total">
-                        <span>ETB {order.amount.toFixed(2)}</span>
-                        <span className={`status-badge ${order.status.toLowerCase().replace(/\s+/g, '-')}`}>
-                          {order.status}
+                        <span>ETB {Number(order?.amount ?? 0).toFixed(2)}</span>
+                        <span className={`status-badge ${(order?.status || "").toLowerCase().replace(/\s+/g, '-')}`}>
+                          {order?.status || "Processing"}
                         </span>
                       </div>
                     </div>
